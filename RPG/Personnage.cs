@@ -51,14 +51,20 @@ namespace RPG
 
         public override void Attaquer(Personnage cible)
         {
-            int attaqueFinale = 0; int degatsBruts = Degat;
+            int attaqueFinale = 0; 
+            int degatsBruts = Degat;
             Joueur joueurCible = cible as Joueur;
 
             if (AttaqueChargeeEnCours)
             {
-                Console.WriteLine($"{Nom} a utilisé son attaque chargée !");
-                AttaqueChargeeEnCours = false;
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.Write($"{Nom} a utilisé son attaque chargée ! ");
+                Console.ResetColor();
                 degatsBruts = Degat / 3;
+                attaqueFinale = Degat - degatsBruts;
+                
+                Console.WriteLine();  // Ajout du saut de ligne
+                AttaqueChargeeEnCours = false;
             }
 
             if (joueurCible != null)
@@ -127,7 +133,8 @@ namespace RPG
                 Console.Write($"{Nom} ");
                 Console.ResetColor();
                 Console.Write("prépare une attaque puissante ! ");
-
+                Console.WriteLine();
+                Degat = degatsBruts;
                 attaqueFinale = 0;
                 Degat *= 3;
                 degatsBruts = Degat / 3;
@@ -137,6 +144,11 @@ namespace RPG
             {
                 Degat = degatsBruts;
             }
+
+            
+            
+            
+
 
             attaqueFinale = Math.Max(attaqueFinale, 0);
 
@@ -268,13 +280,15 @@ namespace RPG
 
         public override void Defendre()
         {
-            if (Inventaire.Any(objet => objet is Bouclier))
+            Bouclier bouclierEquipe = Inventaire.OfType<Bouclier>().FirstOrDefault();
+
+            if (bouclierEquipe != null)
             {
                 Console.ForegroundColor = ConsoleColor.Green;
                 Console.Write($"{Nom} ");
                 Console.ResetColor();
 
-                Console.WriteLine($"se défend avec son bouclier !");
+                Console.WriteLine($"se défend avec son bouclier {bouclierEquipe.Nom} !");
                 EnDefense = true;
             }
             else

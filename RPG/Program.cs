@@ -490,7 +490,7 @@ namespace RPG
             Random random = new Random();
             double multiplicateur = ObtenirMultiplicateur(rareteEnnemi.ToString());
 
-            return new Bouclier($"{rareteEnnemi} {ObtenirNomBouclier(rareteEnnemi.ToString())}") { Protection = (int)(random.Next(1, 6) * multiplicateur) };
+            return new Bouclier($"{ObtenirNomBouclier(rareteEnnemi.ToString())} {rareteEnnemi}") { Protection = (int)(random.Next(1, 6) * multiplicateur) };
         }
 
         static string ObtenirNomBouclier(string rarete)
