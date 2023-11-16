@@ -20,9 +20,10 @@ namespace RPG
 
             Introduction(); RencontrerEnnemi();
             Ennemi ennemiRencontre = Ennemis[0];
-            
+
             while (true)
             {
+                Console.ResetColor();
                 Console.WriteLine("================================================================ nombre de mort: " + NombreMort);
                 AfficherMenu(JoueurActuel, ennemiRencontre);
                 string input = Console.ReadLine();
@@ -84,7 +85,7 @@ namespace RPG
         static void Introduction()
         {
             Console.WriteLine("Le joueur se promène dans un village paisible...");
-            Console.WriteLine("Soudain, un ennemi apparaît par surprise! " + Environment.NewLine );
+            Console.WriteLine("Soudain, un ennemi apparaît par surprise! " + Environment.NewLine);
         }
 
         static void AfficherProfilJoueur()
@@ -102,6 +103,7 @@ namespace RPG
 
         static void AfficherMenu(Joueur joueur, Ennemi ennemi)
         {
+            Console.ResetColor();
             Console.WriteLine(Environment.NewLine + "============================================== nombre de mort: " + NombreMort);
             Console.ForegroundColor = ConsoleColor.Cyan;
             Console.WriteLine("| (A)ttaque | (D)éfendre | (F)uir | (S)oin |");
@@ -110,10 +112,10 @@ namespace RPG
 
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine($"Profil de {joueur.Nom}: Niveau = {joueur.Niveau}, XP = {joueur.Experience}/{joueur.ExperienceNecessaire}, Vie = {joueur.Vie}, Attaque = {joueur.Degat}");
-            
-            
+
+
             Console.WriteLine($"Arme équipée = {joueur.ObtenirArmeEquipee().Nom}, Dégâts de l'arme = {joueur.ObtenirArmeEquipee().Degat}");
-            
+
 
             var bouclierEquipe = joueur.Inventaire.FirstOrDefault(o => o is Bouclier) as Bouclier;
             if (bouclierEquipe != null)
@@ -133,9 +135,6 @@ namespace RPG
                 Console.WriteLine($"Potion équipée = {potionEquipee.Nom}, Soin de la potion = {potionEquipee.Soin}");
             }
             Console.ResetColor();
-            //Console.ForegroundColor = ConsoleColor.Red;
-            //Console.WriteLine($"Profil de {ennemi.Nom}: Vie = {ennemi.Vie}, Attaque = {ennemi.Degat}");
-            //Console.ResetColor();
             AfficherInfosEnnemi(ennemi);
         }
 
@@ -185,7 +184,7 @@ namespace RPG
 
         static void RencontrerEnnemi()
         {
-            
+
             int indiceEnnemiActuel = 0;
             if (Ennemis.Count > 0)
             {
@@ -196,7 +195,7 @@ namespace RPG
                 Console.ResetColor();
                 AfficherInfosEnnemi(ennemiRencontre);
 
-                
+
                 while (ennemiRencontre.Vie > 0 && JoueurActuel.Vie > 0)
                 {
                     ennemiRencontre.Attaquer(JoueurActuel);
@@ -205,13 +204,17 @@ namespace RPG
                     {
                         Console.ForegroundColor = ConsoleColor.Green;
                         Console.Write($"{JoueurActuel.Nom}");
-                        Console.ResetColor(); 
+                        Console.ResetColor();
 
                         Console.ForegroundColor = ConsoleColor.Red;
                         Console.WriteLine($" a été vaincu par {ennemiRencontre.Nom} !");
-                        Console.ResetColor();
+
+                        Console.WriteLine("=============================GAME OVER===========================");
+
                         Console.WriteLine("Appuyez sur 'r' pour recommencer ou 'q' pour quitter.");
 
+                        Console.WriteLine("=================================================================");
+                        Console.ResetColor();
                         string restartInput = Console.ReadLine();
 
                         if (restartInput.ToLower() == "r")
@@ -233,8 +236,7 @@ namespace RPG
                         }
                     }
 
-                    //AfficherInfosEnnemi(ennemiRencontre);
-                    
+
                     AfficherMenu(JoueurActuel, ennemiRencontre);
                     string input = Console.ReadLine();
 
@@ -256,7 +258,7 @@ namespace RPG
                                 Console.WriteLine(ennemiRencontre.Nom);
                                 Console.ResetColor();
                                 AfficherInfosEnnemi(ennemiRencontre);
-                                
+
                             }
                             else
                             {
@@ -275,11 +277,9 @@ namespace RPG
                         Console.WriteLine($"{JoueurActuel.Nom} réussit à fuir !");
                         Console.ResetColor();
 
-                        // Augmenter l'indice de l'ennemi actuel pour passer au suivant
-                        indiceEnnemiActuel++;
+                                                indiceEnnemiActuel++;
 
-                        // Vérifier si tous les ennemis ont été rencontrés
-                        if (indiceEnnemiActuel >= Ennemis.Count)
+                                                if (indiceEnnemiActuel >= Ennemis.Count)
                         {
                             Console.ForegroundColor = ConsoleColor.Green;
                             Console.WriteLine("Vous avez fui avec succès tous les ennemis !");
@@ -292,12 +292,11 @@ namespace RPG
                             Console.WriteLine($"Vous faites face à un nouvel ennemi : {Ennemis[indiceEnnemiActuel].Nom} !");
                             Console.ResetColor();
 
-                            // Ennemi actuel est mis à jour, maintenant affichez son attaque
-                            Ennemis[indiceEnnemiActuel].Attaquer(JoueurActuel);
+                                                        Ennemis[indiceEnnemiActuel].Attaquer(JoueurActuel);
                         }
                     }
                     */
-                else if (input.ToLower() == "s" || input.ToLower() == "soin")
+                    else if (input.ToLower() == "s" || input.ToLower() == "soin")
                     {
                         JoueurActuel.UtiliserPotion();
                         AfficherInfosEnnemi(ennemiRencontre);
@@ -578,24 +577,7 @@ namespace RPG
         }
     }
 
-    public abstract class Personnage
-    {
-        public string Nom { get; set; }
-        public int Vie { get; set; }
-        public int VieMax { get; set; }
-        public int Degat { get; set; }
-
-        public Personnage(string nom, int vie, int degat)
-        {
-            Nom = nom;
-            Vie = vie;
-            VieMax = vie;
-            Degat = degat;
-        }
-
-        public abstract void Attaquer(Personnage cible);
-        public abstract void Defendre();
-    }
+    
 
     public enum Rarete
     {
@@ -606,310 +588,6 @@ namespace RPG
         Mythique
     }
 
-    public class Ennemi : Personnage
-    {
-        private bool peutAttaquer = true;
-        public Rarete Rarete { get; set; }
-        public double TauxDrop { get; set; }
+    
 
-        public Ennemi(string nom, int vie, int degat, Rarete rarete, double tauxDrop) : base(nom, vie, degat)
-        {
-            Rarete = rarete;
-            TauxDrop = tauxDrop;
-        }
-
-        public override void Attaquer(Personnage cible)
-        {
-
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.Write($"{Nom} ");
-            Console.ResetColor();
-
-            Console.ForegroundColor = ConsoleColor.White; // Ou une autre couleur pour le texte de la cible
-            Console.Write("attaque ");
-            Console.ResetColor();
-
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine($"{cible.Nom} !");
-            Console.ResetColor();
-
-            cible.Vie -= Degat;
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.Write($"{cible.Nom} ");
-            Console.ResetColor();
-            Console.WriteLine($"a maintenant {cible.Vie} points de vie.");
-
-
-        }
-
-        public override void Defendre()
-        {
-        }
-
-        public bool PeutAttaquer()
-        {
-            return peutAttaquer;
-        }
-
-        public double CalculerTauxDropAjuste()
-        {
-            switch (Rarete)
-            {
-                case Rarete.Normal:
-                    return TauxDrop;
-                case Rarete.Rare:
-                    return TauxDrop * 1.5;
-                case Rarete.Epic:
-                    return TauxDrop * 2.0;
-                case Rarete.Legendaire:
-                    return TauxDrop * 4.0;
-                case Rarete.Mythique:
-                    return TauxDrop * 10.0;
-                default:
-                    return TauxDrop;
-            }
-        }
-    }
-
-    public class Joueur : Personnage
-    {
-        public List<ObjetEquipable> Inventaire { get; set; }
-        public int Experience { get; set; }
-        public int Niveau { get; set; }
-        public int ExperienceNecessaire { get; private set; }
-
-        public int Defense
-        {
-            get
-            {
-                int defenseTotale = 0;
-                foreach (var objet in Inventaire)
-                {
-                    if (objet is Armure armure)
-                    {
-                        defenseTotale += armure.Protection;
-                    }
-                    else if (objet is Bouclier bouclier)
-                    {
-                        defenseTotale += bouclier.Protection;
-                    }
-                }
-                return defenseTotale;
-            }
-        }
-
-        public bool EnDefense { get; set; }
-
-        public Joueur(string nom, int vie, int degat) : base(nom, vie, degat)
-        {
-            Inventaire = new List<ObjetEquipable>();
-            Experience = 0;
-            Niveau = 1;
-            ExperienceNecessaire = CalculerExperienceNecessaire();
-        }
-
-        public override void Attaquer(Personnage cible)
-        {
-            string armeEquipeeNom = ObtenirArmeEquipee().Nom;
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.Write($"{Nom} ");
-            Console.ResetColor();
-
-            Console.Write($"attaque ");
-
-            Console.ForegroundColor = ConsoleColor.Red; // Ou une autre couleur pour le texte de la cible
-            Console.Write($"{cible.Nom}");
-            Console.ResetColor();
-
-            if (string.IsNullOrEmpty(armeEquipeeNom))
-            {
-                Console.WriteLine(" avec ses poings !");
-                cible.Vie -= Degat;
-            }
-            else
-            {
-                Console.WriteLine($" avec {armeEquipeeNom} !");
-                cible.Vie -= Degat + ObtenirArmeEquipee().Degat;
-            }
-
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.Write($"{cible.Nom} ");
-            Console.ResetColor();
-            Console.WriteLine($"a maintenant {cible.Vie} points de vie.");
-        }
-
-        public override void Defendre()
-        {
-            if (Inventaire.Any(objet => objet is Bouclier))
-            {
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.Write($"{Nom} ");
-                Console.ResetColor();
-
-                Console.WriteLine($"se défend avec son bouclier !");
-                EnDefense = true;
-            }
-            else
-            {
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.Write($"{Nom} ");
-                Console.ResetColor();
-
-                Console.WriteLine($"n'a pas de bouclier équipé !");
-            }
-        }
-
-        public void UtiliserPotion()
-        {
-            var potion = Inventaire.Find(o => o is Potion) as Potion;
-            if (potion != null)
-            {
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.Write($"{Nom} ");
-                Console.ResetColor();
-
-                Console.WriteLine($"utilise une potion de {potion.Nom} !");
-                Vie += potion.Soin;
-                if (Vie > VieMax)
-                {
-                    Vie = VieMax;
-                }
-
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.Write($"{Nom} ");
-                Console.ResetColor();
-
-                Console.WriteLine($"a maintenant {Vie} points de vie.");
-            }
-            else
-            {
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.Write($"{Nom} ");
-                Console.ResetColor();
-
-                Console.WriteLine($"ne peut pas utiliser de potion, aucune potion dans l'inventaire.");
-            }
-        }
-
-        /*
-        public bool Courir()
-        {
-            Random random = new Random();
-            return random.Next(2) == 0;
-        }
-        */
-
-        public void AjouterObjetInventaire(ObjetEquipable objet)
-        {
-            Inventaire.Add(objet);
-            Console.WriteLine($"{Nom} a obtenu {objet.Nom} !");
-            EquiperMeilleurObjet();
-        }
-
-        private void EquiperMeilleurObjet()
-        {
-            var meilleureArme = Inventaire.OfType<Arme>().OrderByDescending(a => a.Degat).FirstOrDefault();
-            var meilleureArmure = Inventaire.OfType<Armure>().OrderByDescending(a => a.Protection).FirstOrDefault();
-            var meilleurBouclier = Inventaire.OfType<Bouclier>().OrderByDescending(b => b.Protection).FirstOrDefault();
-
-            Inventaire.Clear();
-            if (meilleureArme != null)
-                Inventaire.Add(meilleureArme);
-            if (meilleureArmure != null)
-                Inventaire.Add(meilleureArmure);
-            if (meilleurBouclier != null)
-                Inventaire.Add(meilleurBouclier);
-        }
-
-        public Arme ObtenirArmeEquipee()
-        {
-            return Inventaire.FirstOrDefault(o => o is Arme) as Arme ?? new Arme("Poing");
-        }
-
-
-        private int CalculerExperienceNecessaire()
-        {
-            return 50 * Niveau;
-        }
-
-        public void GagnerExperience(Ennemi ennemi)
-        {
-            int xpGagnee = 0;
-
-            switch (ennemi.Rarete)
-            {
-                case Rarete.Normal:
-                    xpGagnee = 10;
-                    break;
-                case Rarete.Rare:
-                    xpGagnee = 30;
-                    break;
-                case Rarete.Epic:
-                    xpGagnee = 50;
-                    break;
-                case Rarete.Legendaire:
-                    xpGagnee = 300;
-                    break;
-                default:
-                    xpGagnee = 0;
-                    break;
-            }
-
-            Experience += xpGagnee;
-            Console.WriteLine($"{Nom} a gagné {xpGagnee} XP !");
-
-            while (Experience >= ExperienceNecessaire)
-            {
-                Experience -= ExperienceNecessaire;
-                Niveau++;
-                ExperienceNecessaire = CalculerExperienceNecessaire();
-                AugmenterStatsNiveau();
-            }
-        }
-
-        private void AugmenterStatsNiveau()
-        {
-            VieMax += 2;
-            Vie = VieMax;
-            Degat += 1;
-
-            Console.WriteLine($"{Nom} est passé au niveau {Niveau} !");
-        }
-    }
-
-
-
-    public abstract class ObjetEquipable
-    {
-        public string Nom { get; set; }
-
-        public ObjetEquipable(string nom)
-        {
-            Nom = nom;
-        }
-    }
-    public class Arme : ObjetEquipable
-    {
-        public Arme(string nom) : base(nom) { }
-
-        public int Degat { get; set; }
-    }
-
-    public class Potion : ObjetEquipable
-    {
-        public Potion(string nom) : base(nom) { }
-        public int Soin { get; set; }
-    }
-
-    public class Armure : ObjetEquipable
-    {
-        public Armure(string nom) : base(nom) { }
-        public int Protection { get; set; }
-    }
-
-    public class Bouclier : ObjetEquipable
-    {
-        public Bouclier(string nom) : base(nom) { }
-        public int Protection { get; set; }
-    }
 }
