@@ -69,7 +69,7 @@ namespace RPG
 
             if (joueurCible != null)
             {
-                if (joueurCible.EnActionDeSoin)
+                if (joueurCible.ActionSoin)
                 {
                     joueurCible.UtiliserPotion();
                     Console.ForegroundColor = ConsoleColor.Green;
@@ -81,7 +81,7 @@ namespace RPG
                     Console.ForegroundColor = ConsoleColor.Red;
                     Console.Write($"{Nom}");
                     Console.ResetColor();
-                    Console.Write(" vas attaquer ");
+                    Console.Write(" va attaquer ");
                     Console.WriteLine();
 
                     if (joueurCible.EnDefense)
@@ -177,12 +177,12 @@ namespace RPG
         {
         }
 
-        public bool PeutAttaquer()
+        public bool Attaquer()
         {
             return peutAttaquer;
         }
 
-        public double CalculerTauxDropAjuste()
+        public double CalculTauxDrop()
         {
             switch (Rarete)
             {
@@ -209,11 +209,11 @@ namespace RPG
         public int Niveau { get; set; }
         public int ExperienceNecessaire { get; private set; }
 
-        public bool AttaqueForteProchainTour { get; set; }
+        public bool AttaqueFortePT { get; set; }
 
-        public void ActiverAttaqueForte()
+        public void AttaqueForte()
         {
-            AttaqueForteProchainTour = true;
+            AttaqueFortePT = true;
         }
 
         public int Defense
@@ -239,19 +239,19 @@ namespace RPG
 
 
         public bool EnDefense { get; set; }
-        public bool EnActionDeSoin { get; set; }
+        public bool ActionSoin { get; set; }
 
         public Joueur(string nom, int vie, int degat) : base(nom, vie, degat)
         {
             Inventaire = new List<ObjetEquipable>();
             Experience = 0;
             Niveau = 1;
-            ExperienceNecessaire = CalculerExperienceNecessaire();
+            ExperienceNecessaire = ExperienceRequise();
         }
 
         public override void Attaquer(Personnage cible)
         {
-            string armeEquipeeNom = ObtenirArmeEquipee().Nom;
+            string NomArmeEquipee = ArmeEquipee().Nom;
             Console.ForegroundColor = ConsoleColor.Green;
             Console.Write($"{Nom} ");
             Console.ResetColor();
@@ -261,15 +261,15 @@ namespace RPG
             Console.ForegroundColor = ConsoleColor.Red; Console.Write($"{cible.Nom}");
             Console.ResetColor();
 
-            if (string.IsNullOrEmpty(armeEquipeeNom))
+            if (string.IsNullOrEmpty(NomArmeEquipee))
             {
                 Console.WriteLine(" avec ses poings !");
                 cible.Vie -= Degat;
             }
             else
             {
-                Console.WriteLine($" avec {armeEquipeeNom} !");
-                cible.Vie -= Degat + ObtenirArmeEquipee().Degat;
+                Console.WriteLine($" avec {NomArmeEquipee} !");
+                cible.Vie -= Degat + ArmeEquipee().Degat;
             }
 
             Console.ForegroundColor = ConsoleColor.Red;
@@ -323,7 +323,7 @@ namespace RPG
 
                 Console.WriteLine($"a maintenant {Vie} points de vie.");
 
-                EnActionDeSoin = true;
+                ActionSoin = true;
             }
             else
             {
@@ -343,7 +343,7 @@ namespace RPG
         }
         */
 
-        public void AjouterObjetInventaire(ObjetEquipable objet)
+        public void AjouterObjet(ObjetEquipable objet)
         {
             Inventaire.Add(objet);
             Console.WriteLine($"{Nom} a obtenu {objet.Nom} !");
@@ -369,13 +369,13 @@ namespace RPG
                 Inventaire.Add(meilleurePotion);
         }
 
-        public Arme ObtenirArmeEquipee()
+        public Arme ArmeEquipee()
         {
             return Inventaire.FirstOrDefault(o => o is Arme) as Arme ?? new Arme("Poing");
         }
 
 
-        private int CalculerExperienceNecessaire()
+        private int ExperienceRequise()
         {
             return 50 * Niveau;
         }
@@ -410,12 +410,12 @@ namespace RPG
             {
                 Experience -= ExperienceNecessaire;
                 Niveau++;
-                ExperienceNecessaire = CalculerExperienceNecessaire();
-                AugmenterStatsNiveau();
+                ExperienceNecessaire = ExperienceRequise();
+                StatsNiveaux();
             }
         }
 
-        private void AugmenterStatsNiveau()
+        private void StatsNiveaux()
         {
             VieMax += 2;
             Vie = VieMax;

@@ -27,15 +27,15 @@ namespace RPG
                 Console.WriteLine("================================================================ nombre de mort: " + NombreMort);
                 AfficherMenu(JoueurActuel, ennemiRencontre);
                 string input = Console.ReadLine();
-                AfficherProfilJoueur();
+                ProfilJoueur();
                 if (input.ToLower() == "a" || input.ToLower() == "attaque")
                 {
-                    JoueurActuel.Attaquer(Ennemis[0]); GestionTourEnnemi();
+                    JoueurActuel.Attaquer(Ennemis[0]); TourEnnemi();
                 }
                 else if (input.ToLower() == "d" || input.ToLower() == "défendre")
                 {
                     JoueurActuel.Defendre();
-                    GestionTourEnnemi();
+                    TourEnnemi();
                 }
                 /*
                 else if (input.ToLower() == "f" || input.ToLower() == "fuir")
@@ -48,14 +48,14 @@ namespace RPG
                     else
                     {
                         Console.WriteLine($"{JoueurActuel.Nom} échoue à fuir et doit affronter l'ennemi !");
-                        GestionTourEnnemi();
+                        TourEnnemi();
                     }
                 }
                 */
                 else if (input.ToLower() == "s" || input.ToLower() == "soin")
                 {
                     JoueurActuel.UtiliserPotion();
-                    GestionTourEnnemi();
+                    TourEnnemi();
                 }
 
 
@@ -74,21 +74,45 @@ namespace RPG
             }
         }
 
-        static void GestionTourEnnemi()
+        static void TourEnnemi()
         {
             foreach (var ennemi in Ennemis)
             {
                 ennemi.Attaquer(JoueurActuel);
             }
         }
-
         static void Introduction()
         {
-            Console.WriteLine("Le joueur se promène dans un village paisible...");
+            Console.WriteLine("Dans un monde où les étoiles murmurent des légendes oubliées et où les montagnes gardent les secrets des anciens, une épopée extraordinaire prend forme. ");
+            Console.WriteLine("Des terres jadis bercées par la magie et l'émerveillement sont aujourd'hui plongées dans l'ombre menaçante d'une obscurité grandissante. ");
+            Console.WriteLine("Des héros émergent, porteurs de destinées entrelacées, appelés à braver l'inconnu et à défier le chaos qui gronde. ");
+            Console.WriteLine("");
+            Console.WriteLine("À travers des contrées luxuriantes et des cités éclatantes, ces êtres d'exception se lancent dans une quête titanesque.");
+            Console.WriteLine("Leurs pas résonnent sur les chemins pavés d'histoires oubliées, tandis que le vent chante le récit d'une prophétie millénaire. ");
+            Console.WriteLine("Ils affrontent des créatures terrifiantes, des sorcières vengeresses et des dragons ancestraux, car la survie de leur monde repose sur leurs épaules.");
+            Console.WriteLine("");
+            Console.WriteLine("Pourtant, alors que l'ombre s'étend et que les ténèbres menacent de tout engloutir, une lueur d'espoir persiste...");
+            Console.WriteLine("L'appel retentit pour une ultime mission : parcourir les vastes plaines et purger ces terres des abominations qui les souillent. ");
+            Console.WriteLine("La destinée les attend au crépuscule, quand la lumière vacille et que la bataille finale se dessine à l'horizon. ");
+            Console.WriteLine("");
+            Console.WriteLine("============================================================================================");
+            Console.WriteLine("Lors de votre épopée, vous pourrez utiliser différentes actions.");
+            Console.WriteLine("La touche a vous permettera d'infliger des dégâts à l'ennemi.");
+            Console.WriteLine("La touche d défendre vous permettera de vous défendre face aux attaques ennemies car ");
+            Console.WriteLine("les ennemies ont deux types d'attaques. Les attaques normales et les attaques fortes qui infligent 3 fois plus de dégâts.");
+            Console.WriteLine("La touche f de la fuite ne vous permet pas de fuir car c'est la mort ou la victoire HIHI");
+            Console.WriteLine("La touche s de soin vous permettra de vous soigner avec une potion. Attention c'est un peu de la triche car se sont des potions de régénération.");
+            Console.WriteLine("Durant votre voyage, vous aurez différents équipements qui seront équipés automatiquement s'ils sont les plus forts.");
+            Console.WriteLine("Bonne chance, enfin si vous en avez HAHAHA.");
+            Console.WriteLine("============================================================================================");
+            Console.WriteLine("");
+            Console.WriteLine("L'HISTOIRE EST PLUS HAUT SI VOUS VOULEZ LA CONSULTER.");
+            Console.WriteLine("");
+            Console.WriteLine("============================================================================================");
             Console.WriteLine("Soudain, un ennemi apparaît par surprise! " + Environment.NewLine);
         }
 
-        static void AfficherProfilJoueur()
+        static void ProfilJoueur()
         {
             Console.WriteLine($"Nom du joueur: {JoueurActuel.Nom}");
             Console.WriteLine($"Niveau: {JoueurActuel.Niveau} | Expérience: {JoueurActuel.Experience}/{JoueurActuel.ExperienceNecessaire}");
@@ -114,7 +138,7 @@ namespace RPG
             Console.WriteLine($"Profil de {joueur.Nom}: Niveau = {joueur.Niveau}, XP = {joueur.Experience}/{joueur.ExperienceNecessaire}, Vie = {joueur.Vie}, Attaque = {joueur.Degat}");
 
 
-            Console.WriteLine($"Arme équipée = {joueur.ObtenirArmeEquipee().Nom}, Dégâts de l'arme = {joueur.ObtenirArmeEquipee().Degat}");
+            Console.WriteLine($"Arme équipée = {joueur.ArmeEquipee().Nom}, Dégâts de l'arme = {joueur.ArmeEquipee().Degat}");
 
 
             var bouclierEquipe = joueur.Inventaire.FirstOrDefault(o => o is Bouclier) as Bouclier;
@@ -135,35 +159,35 @@ namespace RPG
                 Console.WriteLine($"Potion équipée = {potionEquipee.Nom}, Soin de la potion = {potionEquipee.Soin}");
             }
             Console.ResetColor();
-            AfficherInfosEnnemi(ennemi);
+            InfosEnnemi(ennemi);
         }
 
-        static void GenererObjetAleatoire(Rarete rareteEnnemi)
+        static void GenererObjet(Rarete rareteEnnemi)
         {
             Random random = new Random();
-            int typeObjet = random.Next(4); double tauxDeDropAjuste = ObtenirMultiplicateurTauxDrop(rareteEnnemi);
+            int typeObjet = random.Next(4); double tauxDeDropAjuste = TauxDrop(rareteEnnemi);
 
             if (random.NextDouble() < tauxDeDropAjuste)
             {
                 switch (typeObjet)
                 {
                     case 0:
-                        JoueurActuel.AjouterObjetInventaire(GenererArmeAleatoire(rareteEnnemi));
+                        JoueurActuel.AjouterObjet(GenererArme(rareteEnnemi));
                         break;
                     case 1:
-                        JoueurActuel.AjouterObjetInventaire(GenererArmureAleatoire(rareteEnnemi));
+                        JoueurActuel.AjouterObjet(GenererArmure(rareteEnnemi));
                         break;
                     case 2:
-                        JoueurActuel.AjouterObjetInventaire(GenererBouclierAleatoire(rareteEnnemi));
+                        JoueurActuel.AjouterObjet(GenererBouclier(rareteEnnemi));
                         break;
                     case 3:
-                        JoueurActuel.AjouterObjetInventaire(GenererPotionAleatoire(rareteEnnemi));
+                        JoueurActuel.AjouterObjet(GenererPotion(rareteEnnemi));
                         break;
                 }
             }
         }
 
-        static double ObtenirMultiplicateurTauxDrop(Rarete rarete)
+        static double TauxDrop(Rarete rarete)
         {
             switch (rarete)
             {
@@ -193,7 +217,7 @@ namespace RPG
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine(ennemiRencontre.Nom);
                 Console.ResetColor();
-                AfficherInfosEnnemi(ennemiRencontre);
+                InfosEnnemi(ennemiRencontre);
 
 
                 while (ennemiRencontre.Vie > 0 && JoueurActuel.Vie > 0)
@@ -246,7 +270,7 @@ namespace RPG
                         if (ennemiRencontre.Vie <= 0)
                         {
                             Console.WriteLine($"{JoueurActuel.Nom} a vaincu l'ennemi !");
-                            GenererObjetAleatoire(ennemiRencontre.Rarete); JoueurActuel.GagnerExperience(ennemiRencontre);
+                            GenererObjet(ennemiRencontre.Rarete); JoueurActuel.GagnerExperience(ennemiRencontre);
                             Ennemis.RemoveAt(0);
 
                             if (Ennemis.Count > 0)
@@ -257,7 +281,7 @@ namespace RPG
                                 Console.ForegroundColor = ConsoleColor.Red;
                                 Console.WriteLine(ennemiRencontre.Nom);
                                 Console.ResetColor();
-                                AfficherInfosEnnemi(ennemiRencontre);
+                                InfosEnnemi(ennemiRencontre);
 
                             }
                             else
@@ -299,7 +323,7 @@ namespace RPG
                     else if (input.ToLower() == "s" || input.ToLower() == "soin")
                     {
                         JoueurActuel.UtiliserPotion();
-                        AfficherInfosEnnemi(ennemiRencontre);
+                        InfosEnnemi(ennemiRencontre);
                     }
 
                 }
@@ -310,7 +334,7 @@ namespace RPG
             }
         }
 
-        static void AfficherInfosEnnemi(Ennemi ennemi)
+        static void InfosEnnemi(Ennemi ennemi)
         {
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine($"Ennemi : {ennemi.Nom} | Vie : {ennemi.Vie}/{ennemi.VieMax} | Dégâts : {ennemi.Degat}");
@@ -322,20 +346,20 @@ namespace RPG
 
             for (int i = 0; i < 20; i++)
             {
-                ennemis.Add(GenererEnnemiAleatoire());
+                ennemis.Add(GenererEnnemi());
             }
 
             return ennemis;
         }
 
-        static Ennemi GenererEnnemiAleatoire()
+        static Ennemi GenererEnnemi()
         {
             Random random = new Random();
-            Rarete rarete = ChoisirRaretéAjustée(random);
+            Rarete rarete = AjusterRarete(random);
 
-            double multiplicateurVie = ObtenirMultiplicateur(rarete.ToString());
-            double multiplicateurDegat = ObtenirMultiplicateur(rarete.ToString());
-            double multiplicateurDrop = ObtenirMultiplicateur(rarete.ToString());
+            double multiplicateurVie = Multiplicateur(rarete.ToString());
+            double multiplicateurDegat = Multiplicateur(rarete.ToString());
+            double multiplicateurDrop = Multiplicateur(rarete.ToString());
 
             if (rarete == Rarete.Mythique)
             {
@@ -379,7 +403,7 @@ namespace RPG
             return new Ennemi($"{nomsMonstres[indexNom]} {rarete}", (int)(random.Next(5, 20) * multiplicateurVie), (int)(random.Next(2, 10) * multiplicateurDegat), rarete, multiplicateurDrop);
         }
 
-        static Rarete ChoisirRaretéAjustée(Random random)
+        static Rarete AjusterRarete(Random random)
         {
             double probaNormal = 0.4;
             double probaRare = 0.3;
@@ -394,11 +418,13 @@ namespace RPG
                 return Rarete.Rare;
             else if (randomValue < probaNormal + probaRare + probaEpic)
                 return Rarete.Epic;
-            else
+            else if (randomValue < probaNormal + probaRare + probaEpic + probaLegendaire)
                 return Rarete.Legendaire;
+            else
+                return 0;
         }
 
-        public static Rarete ConvertToRarete(string rarete)
+        public static Rarete ConvertirRarete(string rarete)
         {
             switch (rarete.ToLower())
             {
@@ -417,15 +443,15 @@ namespace RPG
             }
         }
 
-        static Arme GenererArmeAleatoire(Rarete rareteEnnemi)
+        static Arme GenererArme(Rarete rareteEnnemi)
         {
             Random random = new Random();
-            double multiplicateur = ObtenirMultiplicateur(rareteEnnemi.ToString());
+            double multiplicateur = Multiplicateur(rareteEnnemi.ToString());
 
-            return new Arme($"{rareteEnnemi} {ObtenirNomArme(rareteEnnemi.ToString())}") { Degat = (int)(random.Next(1, 6) * multiplicateur) };
+            return new Arme($"{rareteEnnemi} {NomArme(rareteEnnemi.ToString())}") { Degat = (int)(random.Next(1, 6) * multiplicateur) };
         }
 
-        static string ObtenirNomArme(string rarete)
+        static string NomArme(string rarete)
         {
             Random random = new Random();
             switch (rarete)
@@ -451,15 +477,15 @@ namespace RPG
             }
         }
 
-        static Armure GenererArmureAleatoire(Rarete rareteEnnemi)
+        static Armure GenererArmure(Rarete rareteEnnemi)
         {
             Random random = new Random();
-            double multiplicateur = ObtenirMultiplicateur(rareteEnnemi.ToString());
+            double multiplicateur = Multiplicateur(rareteEnnemi.ToString());
 
-            return new Armure($"{rareteEnnemi} {ObtenirNomArmure(rareteEnnemi.ToString())}") { Protection = (int)(random.Next(1, 6) * multiplicateur) };
+            return new Armure($"{rareteEnnemi} {NomArmure(rareteEnnemi.ToString())}") { Protection = (int)(random.Next(1, 6) * multiplicateur) };
         }
 
-        static string ObtenirNomArmure(string rarete)
+        static string NomArmure(string rarete)
         {
             Random random = new Random();
             switch (rarete)
@@ -485,15 +511,15 @@ namespace RPG
             }
         }
 
-        static Bouclier GenererBouclierAleatoire(Rarete rareteEnnemi)
+        static Bouclier GenererBouclier(Rarete rareteEnnemi)
         {
             Random random = new Random();
-            double multiplicateur = ObtenirMultiplicateur(rareteEnnemi.ToString());
+            double multiplicateur = Multiplicateur(rareteEnnemi.ToString());
 
-            return new Bouclier($"{ObtenirNomBouclier(rareteEnnemi.ToString())} {rareteEnnemi}") { Protection = (int)(random.Next(1, 6) * multiplicateur) };
+            return new Bouclier($"{NomBouclier(rareteEnnemi.ToString())} {rareteEnnemi}") { Protection = (int)(random.Next(1, 6) * multiplicateur) };
         }
 
-        static string ObtenirNomBouclier(string rarete)
+        static string NomBouclier(string rarete)
         {
             Random random = new Random();
             switch (rarete)
@@ -519,33 +545,33 @@ namespace RPG
             }
         }
 
-        static Potion GenererPotionAleatoire(Rarete rareteEnnemi)
+        static Potion GenererPotion(Rarete rareteEnnemi)
         {
             Random random = new Random();
-            double multiplicateur = ObtenirMultiplicateur(rareteEnnemi.ToString());
+            double multiplicateur = Multiplicateur(rareteEnnemi.ToString());
 
-            return new Potion($"{rareteEnnemi} {ObtenirNomPotion(rareteEnnemi.ToString())}") { Soin = (int)(random.Next(5, 11) * multiplicateur) };
+            return new Potion($"{rareteEnnemi} {NomPotion(rareteEnnemi.ToString())}") { Soin = (int)(random.Next(5, 11) * multiplicateur) };
         }
 
-        static string ObtenirNomPotion(string rarete)
+        static string NomPotion(string rarete)
         {
             Random random = new Random();
             switch (rarete)
             {
                 case "Normal":
-                    string[] nomsNormaux = { "Potion de soin légère", "Élixir de vitalité", "Potion de guérison mineure" };
+                    string[] nomsNormaux = { "Potion de régénération légère", "Élixir de vitalité", "Potion de régénération mineure" };
                     return nomsNormaux[random.Next(nomsNormaux.Length)];
 
                 case "Rare":
-                    string[] nomsRares = { "Potion de soin avancée", "Élixir de régénération", "Potion de guérison majeure" };
+                    string[] nomsRares = { "Potion de régénération avancée", "Élixir de régénération", "Potion de régénération majeure" };
                     return nomsRares[random.Next(nomsRares.Length)];
 
                 case "Epic":
-                    string[] nomsEpics = { "Potion de soin éthérée", "Élixir de résurrection", "Potion de guérison suprême" };
+                    string[] nomsEpics = { "Potion de régénération éthérée", "Élixir de résurrection", "Potion de régénération suprême" };
                     return nomsEpics[random.Next(nomsEpics.Length)];
 
                 case "Légendaire":
-                    string[] nomsLegendaires = { "Potion de soin divine", "Élixir d'immortalité", "Potion de guérison ultime" };
+                    string[] nomsLegendaires = { "Potion de régénération divine", "Élixir d'immortalité", "Potion de régénération ultime" };
                     return nomsLegendaires[random.Next(nomsLegendaires.Length)];
 
                 default:
@@ -564,7 +590,7 @@ namespace RPG
             else return "Légendaire";
         }
 
-        static double ObtenirMultiplicateur(string rarete)
+        static double Multiplicateur(string rarete)
         {
             switch (rarete)
             {
